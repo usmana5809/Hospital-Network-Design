@@ -1,0 +1,242 @@
+do sh ip route
+do sh start
+do sh port-security
+do Show vlan brief
+do Show interface trunk
+do sh ip int br
+do sh crypto ipse sa
+
+license boot module c2900 technology-package securityk9
+
+Switch>en
+Switch#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Switch(config)#hostname SSS
+MER-SW(config)#enable password cisco
+MER-SW(config)#no ip domain lookup
+MER-SW(config)#banner motd #No Unathorised Acess!!!#
+MER-SW(config)#line console 0
+MER-SW(config-line)#password cisco
+MER-SW(config-line)#login
+MER-SW(config-line)#exit
+MER-SW(config)#service password-encryption
+
+en
+config t
+hostname SSS
+enable password cisco
+no ip domain lookup
+banner motd # no unathorised Acess!!!#
+line console 0
+password cisco
+login
+exit
+service password-encryption
+
+
+ip domain name cisco.net
+username admin password cisco
+crypto key generate rsa
+1024
+line vty 0 15
+login local
+transport input ssh
+exit
+do wr
+
+
+
+
+
+ex
+vlan 70
+name SSS
+ex
+int range fa0/1-2
+switchport mode trunk
+ex
+
+int range fa0/3-24
+switchport mode access
+switchport access vlan 70
+ex
+
+
+
+
+
+
+
+EX
+VLAN 80
+VLAN 90
+VLAN 100
+VLAN 110
+VLAN 120
+VLAN 130
+
+int range gig1/0/2-7
+switchport mode trunk
+ex
+do wr
+
+
+
+ip routing
+router ospf 10
+network 195.136.17.4 0.0.0.3 area 0
+network 195.136.17.12 0.0.0.3 area 0
+ex
+do wr
+
+
+
+
+
+
+
+ip routing
+router ospf 10
+network 195.168.102.80 0.0.0.3 area 0
+network 195.168.102.84 0.0.0.3 area 0
+network 195.168.102.88 0.0.0.3 area 0
+network 195.168.102.64 0.0.0.3 area 0
+network 195.136.17.4   0.0.0.3 area 0
+network 195.136.17.0   0.0.0.3 area 0
+ex
+ip route 0.0.0.0 0.0.0.0 195.136.17.2
+ip route 0.0.0.0 0.0.0.0 195.136.17.6 70
+do wr
+
+
+ip switch
+switch ospf 10
+ network 192.168.102.88 0.0.0.3 area 0
+ network 192.136.17.0 0.0.0.3 area 0
+ network 192.136.17.4 0.0.0.3 area 0
+ network 192.168.102.80 0.0.0.3 area 0
+ network 192.168.102.84 0.0.0.3 area 0
+ex
+ip swtich 0.0.0.0 0.0.0.0 192.168.102.80 
+ip switch 0.0.0.0 0.0.0.0 192.168.102.84 70
+do wr
+
+
+
+int vlan 80
+ip address 192.168.101.129 255.255.255.224
+ip helper-address 192.168.102.67
+
+int vlan 90
+ip address 192.168.101.161 255.255.255.224
+ip helper-address 192.168.102.67
+
+
+int vlan 100
+ip address 192.168.101.193 255.255.255.224
+ip helper-address 192.168.102.67
+
+int vlan 110
+ip address 192.168.101.255 255.255.255.224
+ip helper-address 192.168.102.67
+
+int vlan 120
+ip address 192.168.102.1 255.255.255.224
+ip helper-address 192.168.102.67
+
+int vlan 130
+ip address 192.168.102.33 255.255.255.224
+ip helper-address 192.168.102.67 
+
+
+int vlan 10
+ip address 192.168.100.1 255.255.255.192
+ip helper-address 192.168.102.67
+
+int vlan 20
+ip address 192.168.100.65 255.255.255.192
+ip helper-address 192.168.102.67
+
+int vlan 30
+ip address 192.168.100.129 255.255.255.192
+ip helper-address 192.168.102.67
+
+int vlan 40
+ip address 192.168.100.193 255.255.255.192
+ip helper-address 192.168.102.67
+
+int vlan 50
+ip address 192.168.101.1 255.255.255.192
+ip helper-address 192.168.102.67
+
+int vlan 60
+ip address 192.168.101.65 255.255.255.192
+ip helper-address 192.168.102.67
+
+
+
+
+
+HQ ROUTE AGGREGATION////////////
+192.168.100.0/26
+192.168.100.64/26
+192.168.100.128/26
+192.168.100.192/26
+		---SUMMARISED192.168.100.0/25
+
+
+192.168.100.1/26
+192.168.100.64/26
+		---SUMMARISED192.168.101.0/25
+
+
+HQ ROUTE AGGREGATION////////////
+192.168.101.128/27
+192.168.101.160/27
+192.168.101.192/27
+192.168.101.224/27
+192.168.102.0/27
+192.168.102.32/27
+
+
+
+
+
+
+crypto isakmp policy 10
+encryption aes 256
+crypto isakmp policy 10
+encryption aes 256
+authentication pre-share
+
+group 5
+ex
+
+crypto isakmp key  vpnpa55 address 192.168.102.89
+crypto ipse transform-set VPN-SET esp-aes esp-sha-hmac
+crypto map VPN-MAP 10 ipsec-isakmp
+  
+description VPN connects to HQ-HOSPITAL
+set peer 192.168.102.89
+set transform-set VPN-SET
+match address 110
+ex
+interface Serial0/3/0
+crypto map VPN-MAP
+
+
+HQ-Router(config-if)#ex
+HQ-Router(config)#do wr
+
+
+
+
+
+
+
+
+
+
+
+
+
